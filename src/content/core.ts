@@ -3,31 +3,37 @@ export const BUTTON_CONFIG = [
     promptName: "REWRITE",
     label: "Rewrite Text",
     buttonText: "1",
+    prompt: (text: string, instruction?: string) => `Rephrase the below text \n <text> ${text} </text \n direcltly share the rephrased text in plan textand nothing else`,
   },
   {
     promptName: "CORRECT_ENGLISH",
     label: "Correct Englist",
     buttonText: "2",
+    prompt: (text: string, instruction?: string) => `Just Correct the English, grammar, punctuation and spelling for the below text \n <text> ${text} </text>`,
   },
   {
     promptName: "TRANSLATE_TO_ENGLISH",
     label: "Translate to English",
     buttonText: "3",
+    prompt: (text: string, instruction?: string) => `Identify the language of below text and transform it to English. \n <text> ${text} </text> \n Only Share the transformed text and nothing else`,
   },
   {
     promptName: "SUMMARIZE",
     label: "Summarize the text",
     buttonText: "4",
+    prompt: (text: string, instruction?: string) => `Summarize the below text in less then 100 words \n <text> ${text} </text>`,
   },
   {
     promptName: "ANSWER_IN_SHORT",
     label: "Answer in short",
     buttonText: "5",
+    prompt: (text: string, instruction?: string) => `Answer the below question in less then 100 words. \n <question> ${text} </question>`,
   },
   {
     promptName: "CUSTOM",
     label: "Custom",
     buttonText: "6",
+    prompt: (text: string, instruction?: string) => `User have give below text \n <text> ${text} </text> \n Transform this text based on below instruction \n <instruction> ${instruction} </instruction> \n`,
   },
 ];
 
@@ -41,8 +47,6 @@ export const validateInput = (
   instruction: string,
   onError: (message: string) => void
 ) => {
-  console.log("validation", promptName, input, instruction);
-
   if (input.length === 0) {
     onError("Please select text first.");
     return false;
@@ -71,31 +75,23 @@ export function debounce(func: () => void, delay: number = 200) {
   };
 }
 
-export const buildInAiSummarizer = async () => {
-  if (self && self.ai && self.ai.summarizer) {
-    const options: AISummarizerCreateOptions = {
-      sharedContext: "This is a scientific article",
-      type: "tl;dr",
-      format: "plain-text",
-      length: "medium",
-    };
-    const available = (await self.ai.summarizer.capabilities()).available;
-    console.log("buildInAiSummarizer", available);
-    if (available === "no") {
-      // The Summarizer API isn't usable.
-      return;
-    }
-    if (available === "readily") {
-      // The Summarizer API can be used immediately .
-      return await self.ai.summarizer.create(options);
-    } else {
-      let summarizer = await self.ai.summarizer.create(options);
-      //TODO: handle download progress
-      return summarizer;
-    }
 
+export const tranformWithBuildInAi = async (instruction: string) => {
+  if (self && self.ai && self.ai.languageModel) {
+    const available = (await self.ai.languageModel.capabilities()).available;
+    if (available === "no") {
+      return null;
+    }
+    const capabilities = await self.ai.languageModel.capabilities();
+    const model = await self.ai.languageModel.create({
+      temperature: 0.5,
+      topK: capabilities.defaultTopK || undefined,
+      systemPrompt: instruction,
+    });
+    return model;
   }
-};
+  return null;
+}
 
 export const handleTranform = (
   promptName: string,
@@ -118,24 +114,26 @@ export const handleTranform = (
 
   setIsLoading(true); // show loading indicator
   setErrorMessage("");
-  if (promptName === "SUMMARIZE") {
-    console.log("summarizing with buildIn AI");
-    buildInAiSummarizer().then((summarizer) => {
-      if (!summarizer) {
-        console.log("summarizer not found");
-        return;
-      }
-      summarizer.summarize(input).then((data) => {
-        console.log("summarizer data", data);
-        onSuccessfulTransform(data);
-      }).catch(() => {
-        setErrorMessage("Something went wrong. Please try again.");
-      }).finally(() => {
-        setIsLoading(false);
-      });
+  console.log("summarizing with buildIn AI");
+  const prompt = BUTTON_CONFIG.find((button) => button.promptName === promptName)?.prompt;
+  if (!prompt) {
+    setErrorMessage("Something went wrong. Please try again.");
+    return;
+  }
+  tranformWithBuildInAi(prompt(input, instruction)).then((model) => {
+    if (!model) {
+      console.log("model not found");
+      return;
+    }
+    model.prompt("").then((data) => {
+      console.log("model data", data);
+      onSuccessfulTransform(data);
+    }).catch(() => {
+      setErrorMessage("Something went wrong. Please try again.");
     }).finally(() => {
       setIsLoading(false);
-    })
-
-  }
+    });
+  }).finally(() => {
+    setIsLoading(false);
+  })
 };
