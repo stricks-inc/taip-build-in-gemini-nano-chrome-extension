@@ -1,5 +1,6 @@
 console.log('Background script running');
 
+import { initLanguageModel, isLanguageModelAvailable } from './ai';
 import { saveEmail } from './firebase';
 
 
@@ -22,13 +23,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ data: result.email });
     });
     return true;
+  } else if (message.command === 'get_popup_state') {
+    chrome.storage.local.get(['email'], async (result) => {
+      sendResponse({ 
+        data: {
+          email: result.email,
+          isAiAvailable: isLanguageModelAvailable()
+        }
+      });
+    });
+    return true;
   }
 });
 
 chrome.commands.onCommand.addListener((command) => {
   console.log('command', command);
   if (command === "activate") {
-    // if user is not logged in, show popup
     chrome.storage.local.get(['email'], (result) => {
       if (!result.email) {
        chrome.action.openPopup();
@@ -36,6 +46,7 @@ chrome.commands.onCommand.addListener((command) => {
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
           if (tabs[0]?.id) {
             chrome.tabs.sendMessage(tabs[0].id, {command: "toggle_visibility"});
+            initLanguageModel();
           }
         });
       }

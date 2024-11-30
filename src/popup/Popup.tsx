@@ -3,14 +3,18 @@ import React, { useEffect, useState } from "react";
 const Popup: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [isAiAvailable, setIsAiAvailable] = useState(false);
 
   useEffect(() => {
-    chrome.runtime.sendMessage({ command: "get_email" }, (response) => {
+    chrome.runtime.sendMessage({ command: "get_popup_state" }, (response) => {
       if (response && response.data) {
-        setEmail(response.data);
+        setEmail(response.data.email);
+        setIsAiAvailable(response.data.isAiAvailable);
       }
     });
   }, []);
+  console.log("isAiAvailable", isAiAvailable);
+  console.log("email", email);
   const handleEmailSubmit = (email: string) => {
     // validate email
 
@@ -30,10 +34,30 @@ const Popup: React.FC = () => {
   };
 
   return <div className=" taip-h-[400px] taip-w-[360px] taip-bg-gray-100">
-    {email && <HowItWorks />}
-    {!email && <LoginPage errorMessage={errorMessage} onSubmit={handleEmailSubmit} />}
+    {!isAiAvailable && <AICapabilitiesEnabledStep />}
+    {isAiAvailable && email && <HowItWorks />}
+    {isAiAvailable && !email && <LoginPage errorMessage={errorMessage} onSubmit={handleEmailSubmit} />}
   </div>
 };
+
+function AICapabilitiesEnabledStep() {
+  const handleEnableAI = (flag: string) => {
+    chrome.tabs.create({ url: `chrome://flags/${flag}` });
+  };
+  
+  //TODO: correct this flag name
+
+  return <div className="taip-flex taip-flex-col taip-justify-center taip-items-center taip-h-full taip-m-4">
+    <h1 className="taip-text-2xl taip-font-bold taip-mb-8">Your browser does not support AI capabilities</h1>
+    <p className="taip-text-sm taip-mb-8">Please enable AI capabilities in your browser settings.</p>
+    <button 
+      onClick={() => handleEnableAI('Experimental Web Platform features')}
+      className="taip-text-blue-500 taip-underline"
+    >
+      Enable AI capabilities
+    </button>
+  </div>;
+}
 
 function HowItWorks() {
   return (
