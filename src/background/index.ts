@@ -1,6 +1,6 @@
 console.log('Background script running');
 
-import { initLanguageModel, isLanguageModelAvailable } from './ai';
+import { getCapabilities, initAllModels, isLanguageModelAvailable, isRewriterAvailable, isSummarizerAvailable } from './ai';
 import { saveEmail } from './firebase';
 
 
@@ -18,19 +18,29 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     });
     return true;
   }else if (message.command === 'get_email') {
+    initAllModels();
     chrome.storage.local.get(['email'], (result) => {
       console.log("Background script received email", result);
       sendResponse({ data: result.email });
     });
     return true;
   } else if (message.command === 'get_popup_state') {
-    chrome.storage.local.get(['email'], async (result) => {
+    chrome.storage.local.get(['email'], (result) => {
       sendResponse({ 
         data: {
           email: result.email,
-          isAiAvailable: isLanguageModelAvailable()
+          available: {
+            isLanguageModelAvailable: isLanguageModelAvailable(),
+            isRewriterAvailable: isRewriterAvailable(),
+            isSummarizerAvailable: isSummarizerAvailable()
+          },
         }
       });
+    });
+    return true;
+  }else if (message.command === 'get_capabilities') {
+    getCapabilities().then((capabilities) => {
+      sendResponse({ capabilities });
     });
     return true;
   }
@@ -46,7 +56,7 @@ chrome.commands.onCommand.addListener((command) => {
         chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
           if (tabs[0]?.id) {
             chrome.tabs.sendMessage(tabs[0].id, {command: "toggle_visibility"});
-            initLanguageModel();
+            initAllModels();
           }
         });
       }

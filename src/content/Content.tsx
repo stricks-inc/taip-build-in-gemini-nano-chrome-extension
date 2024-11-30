@@ -50,6 +50,12 @@ const Content: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    chrome.runtime.sendMessage({ command: "get_capabilities" }, (response) => {
+      console.log("capabilities", response);
+    });
+  }, []);
+
   // Add listener for the toggle_visibility command
   useEffect(() => {
     const toggleVisibilityListener = (

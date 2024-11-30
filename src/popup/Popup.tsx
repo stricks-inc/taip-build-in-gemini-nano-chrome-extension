@@ -3,18 +3,30 @@ import React, { useEffect, useState } from "react";
 const Popup: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [email, setEmail] = useState("");
-  const [isAiAvailable, setIsAiAvailable] = useState(false);
-
+  const [aiAvailable, setAiAvailable] = useState<any>(null);
+  const [languageModelAvailable, setLanguageModelAvailable] = useState<string | null>(null);
   useEffect(() => {
     chrome.runtime.sendMessage({ command: "get_popup_state" }, (response) => {
       if (response && response.data) {
         setEmail(response.data.email);
-        setIsAiAvailable(response.data.isAiAvailable);
+        setAiAvailable(response.data.available);
       }
     });
   }, []);
-  console.log("isAiAvailable", isAiAvailable);
-  console.log("email", email);
+
+  useEffect(() => {
+    chrome.runtime.sendMessage({ command: "get_capabilities" }, (response) => {
+      const available = response.capabilities.languageModel;
+      if (available === "no" || available=== null) {
+        setLanguageModelAvailable("Language model not available");
+      } else if (available=== "after-download") {
+        setLanguageModelAvailable("Language model is downloading...");
+      } else if (available === "readily") {
+        setLanguageModelAvailable("Language model is ready");
+      }
+    });
+  }, []);
+
   const handleEmailSubmit = (email: string) => {
     // validate email
 
@@ -32,15 +44,16 @@ const Popup: React.FC = () => {
     chrome.runtime.sendMessage({ command: "save_email", data: { email } });
     setEmail(email);
   };
+  const isAiAvailable = aiAvailable?.isLanguageModelAvailable || aiAvailable?.isRewriterAvailable || aiAvailable?.isSummarizerAvailable;
 
   return <div className=" taip-h-[400px] taip-w-[360px] taip-bg-gray-100">
-    {!isAiAvailable && <AICapabilitiesEnabledStep />}
-    {isAiAvailable && email && <HowItWorks />}
+    {!isAiAvailable && <AICapabilitiesEnabledStep aiAvailable={aiAvailable} />}
+    {isAiAvailable && email && <HowItWorks message={languageModelAvailable} />}
     {isAiAvailable && !email && <LoginPage errorMessage={errorMessage} onSubmit={handleEmailSubmit} />}
   </div>
 };
 
-function AICapabilitiesEnabledStep() {
+function AICapabilitiesEnabledStep({aiAvailable}: {aiAvailable: any}) {
   const handleEnableAI = (flag: string) => {
     chrome.tabs.create({ url: `chrome://flags/${flag}` });
   };
@@ -59,15 +72,17 @@ function AICapabilitiesEnabledStep() {
   </div>;
 }
 
-function HowItWorks() {
+function HowItWorks({message}: {message: string | null}) {
   return (
     <div className="taip-flex taip-flex-col taip-justify-center taip-items-center taip-h-full">
       <img
         src={chrome.runtime.getURL("images/icon-128.png")}
         alt="icon"
-        className="taip-w-16 taip-h-16 taip-mb-4 taip-mt-8"
+        className="taip-w-16 taip-h-16 taip-mb-4 taip-mt-2"
       />
-      <h1 className="taip-text-2xl taip-font-bold taip-mb-8">How it works</h1>
+      <h1 className="taip-text-2xl taip-font-bold taip-mb-2">How it works</h1>
+
+      <p className="taip-text-sm taip-mb-2">{message}</p>
       <div className="taip-mb-6 taip-text-sm taip-m-4">
         <p className="taip-mb-2">1. Copy the text to transform (cmd/ctrl + c).</p>
         <p className="taip-mb-2">2. Press cmd/ctrl + shift + U to activate extention.</p>
