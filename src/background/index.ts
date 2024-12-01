@@ -1,6 +1,6 @@
 console.log('Background script running');
 
-import { getCapabilities, initAllModels, isLanguageModelAvailable, isRewriterAvailable, isSummarizerAvailable } from './ai';
+import { getCapabilities, getLanguageModel, initAllModels, isLanguageModelAvailable, isRewriterAvailable, isSummarizerAvailable } from './ai';
 import { saveEmail } from './firebase';
 
 
@@ -41,6 +41,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }else if (message.command === 'get_capabilities') {
     getCapabilities().then((capabilities) => {
       sendResponse({ capabilities });
+    });
+    return true;
+  }else if (message.command === 'handle_transform') {
+    console.log("handle_transform", message.data);
+    const instruction = message.data.instruction;
+    const languageModel = getLanguageModel();
+    if (!languageModel) {
+      sendResponse({ success: false, error: "Language model not available" });
+      return;
+    }
+    languageModel.prompt( instruction).then((result) => {
+      sendResponse({ success: true, text: result });
+    }).catch((error) => {
+      sendResponse({ success: false, error: error.message });
     });
     return true;
   }

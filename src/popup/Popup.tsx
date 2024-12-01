@@ -44,7 +44,7 @@ const Popup: React.FC = () => {
     chrome.runtime.sendMessage({ command: "save_email", data: { email } });
     setEmail(email);
   };
-  const isAiAvailable = aiAvailable?.isLanguageModelAvailable || aiAvailable?.isRewriterAvailable || aiAvailable?.isSummarizerAvailable;
+  const isAiAvailable = aiAvailable?.isLanguageModelAvailable;
 
   return <div className=" taip-h-[400px] taip-w-[360px] taip-bg-gray-100">
     {!isAiAvailable && <AICapabilitiesEnabledStep aiAvailable={aiAvailable} />}
@@ -54,6 +54,7 @@ const Popup: React.FC = () => {
 };
 
 function AICapabilitiesEnabledStep({aiAvailable}: {aiAvailable: any}) {
+  
   const handleEnableAI = (flag: string) => {
     chrome.tabs.create({ url: `chrome://flags/${flag}` });
   };
@@ -64,10 +65,10 @@ function AICapabilitiesEnabledStep({aiAvailable}: {aiAvailable: any}) {
     <h1 className="taip-text-2xl taip-font-bold taip-mb-8">Your browser does not support AI capabilities</h1>
     <p className="taip-text-sm taip-mb-8">Please enable AI capabilities in your browser settings.</p>
     <button 
-      onClick={() => handleEnableAI('Experimental Web Platform features')}
+      onClick={() => handleEnableAI('prompt-api-for-gemini-nano')}
       className="taip-text-blue-500 taip-underline"
     >
-      Enable AI capabilities
+     Enable "Prompt API for Gemini Nano" Flags
     </button>
   </div>;
 }

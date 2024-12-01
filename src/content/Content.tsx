@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { BUTTON_CONFIG, debounce, getPromptName, handleTranform, validateInput } from "./core";
+import { BUTTON_CONFIG, debounce, getPrompt, handleTranform, validateInput } from "./core";
 
 
 const Content: React.FC = () => {
@@ -50,12 +50,6 @@ const Content: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    chrome.runtime.sendMessage({ command: "get_capabilities" }, (response) => {
-      console.log("capabilities", response);
-    });
-  }, []);
-
   // Add listener for the toggle_visibility command
   useEffect(() => {
     const toggleVisibilityListener = (
@@ -75,6 +69,17 @@ const Content: React.FC = () => {
       chrome.runtime.onMessage.removeListener(toggleVisibilityListener);
     };
   }, []);
+
+  useEffect(() => {
+    chrome.runtime.sendMessage({ command: "get_capabilities" }, (response) => {
+      const available = response.capabilities.languageModel;
+      if (available === "no" || available=== null) {
+        setErrorMessage("Language model not available");
+      }else if (available === "after-download") {
+        setErrorMessage("Language model is downloading...");
+      }
+    });
+  }, [customInstruction]);
 
 
 
@@ -103,12 +108,12 @@ const Content: React.FC = () => {
       case "4":
       case "5":
       case "6":
-        var promptName = getPromptName(event.key) || "";
-        console.log("listenForKeyInputs: state", promptName, inputText, customInstruction);
-        var isInputValid = validateInput(promptName, inputText, customInstruction, setErrorMessage);
+        var prompt = getPrompt(event.key) || {promptName: "", prompt: (text: string, instruction?: string) => ""};
+        console.log("listenForKeyInputs: state", prompt.promptName, inputText, customInstruction);
+        var isInputValid = validateInput(prompt.promptName, inputText, customInstruction, setErrorMessage);
         if (isInputValid) {
           setShowInfoPopup(true);
-          handleTranform(promptName, inputText, customInstruction, isLoading, setIsLoading, true, setShowInfoPopup, setErrorMessage, (text) =>{
+          handleTranform(prompt.promptName, inputText, customInstruction, isLoading, setIsLoading, true, setShowInfoPopup, setErrorMessage, (text) =>{
             setOutputText(text);
             navigator.clipboard.writeText(text)
             setMessage("Text copied. Press Cmd/Ctrl + V to paste");
@@ -143,8 +148,17 @@ const Content: React.FC = () => {
   }
 
   if (!isVisible) {
+    console.log("not visible");
     return null;
   }
+
+  console.log("states", {
+    isVisible,
+    isLoading,
+    showInfoPopup,
+    error,
+    message
+  });
 
   return (
     <div

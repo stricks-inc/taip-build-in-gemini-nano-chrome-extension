@@ -128,6 +128,3 @@ export const getSummarizer = () => {
     }
     return summarizer;
 }
-
-
-

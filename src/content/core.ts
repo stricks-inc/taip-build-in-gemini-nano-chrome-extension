@@ -37,9 +37,8 @@ export const BUTTON_CONFIG = [
   },
 ];
 
-export const getPromptName = (buttonText: string): string | undefined => {
-  return BUTTON_CONFIG.find((button) => button.buttonText === buttonText)
-    ?.promptName;
+export const getPrompt = (buttonText: string): {promptName: string, prompt: (text: string, instruction?: string) => string} | undefined => {
+  return BUTTON_CONFIG.find((button) => button.buttonText === buttonText);
 };
 export const validateInput = (
   promptName: string,
@@ -76,23 +75,6 @@ export function debounce(func: () => void, delay: number = 200) {
 }
 
 
-export const tranformWithBuildInAi = async (instruction: string) => {
-  if (self && self.ai && self.ai.languageModel) {
-    const available = (await self.ai.languageModel.capabilities()).available;
-    if (available === "no") {
-      return null;
-    }
-    const capabilities = await self.ai.languageModel.capabilities();
-    const model = await self.ai.languageModel.create({
-      temperature: 0.5,
-      topK: capabilities.defaultTopK || undefined,
-      systemPrompt: instruction,
-    });
-    return model;
-  }
-  return null;
-}
-
 export const handleTranform = (
   promptName: string,
   input: string,
@@ -105,6 +87,7 @@ export const handleTranform = (
   onSuccessfulTransform: (text: string) => void
 ) => {
   if (isLoading) {
+    console.log("handleTranform still loading", isLoading);
     return;
   }
 
@@ -115,25 +98,25 @@ export const handleTranform = (
   setIsLoading(true); // show loading indicator
   setErrorMessage("");
   console.log("summarizing with buildIn AI");
-  const prompt = BUTTON_CONFIG.find((button) => button.promptName === promptName)?.prompt;
+  const prompt = BUTTON_CONFIG.find((button) => button.promptName === promptName);
   if (!prompt) {
     setErrorMessage("Something went wrong. Please try again.");
     return;
   }
-  tranformWithBuildInAi(prompt(input, instruction)).then((model) => {
-    if (!model) {
-      console.log("model not found");
-      return;
+  chrome.runtime.sendMessage({ command: "handle_transform", data: { text: input, instruction: prompt.prompt(input, instruction), promptName: prompt.promptName} }, (response) => {
+    console.log("handle_transform response", response);
+    if (response.success) {
+      onSuccessfulTransform(response.text);
+    } else {
+      setErrorMessage(response.error);
     }
-    model.prompt("").then((data) => {
-      console.log("model data", data);
-      onSuccessfulTransform(data);
-    }).catch(() => {
-      setErrorMessage("Something went wrong. Please try again.");
-    }).finally(() => {
-      setIsLoading(false);
-    });
-  }).finally(() => {
     setIsLoading(false);
-  })
+    if (showInfoPopup) {
+      // hide info popup after 2 seconds
+      console.log("hiding info popup");
+      setTimeout(() => {
+        setShowInfoPopup(false);
+      }, 2000);
+    }
+  });
 };
