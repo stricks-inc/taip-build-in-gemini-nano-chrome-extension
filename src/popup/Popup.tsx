@@ -81,7 +81,14 @@ function AICapabilitiesEnabledStep({aiAvailable}: {aiAvailable: any}) {
           onClick={() => handleEnableAI("summarization-api-for-gemini-nano")}
           className="taip-text-blue-500 taip-underline taip-mt-2"
         >
-          Enable "summarization-api-for-gemini-nano" Flags
+          Enable "Summarization API for Gemini Nano" Flags
+        </button>
+
+        <button 
+          onClick={() => handleEnableAI("optimization-guide-on-device-model")}
+          className="taip-text-blue-500 taip-underline taip-mt-2"
+        >
+          Enable "Enables optimization guide on device" Flags
         </button>
         <p className="taip-text-sm taip-mb-2">Relaunch your browser after enabling the above flags.</p>
       </div>
