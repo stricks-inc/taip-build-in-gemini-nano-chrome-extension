@@ -1,10 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "Taip",
+    "name": "Taip to write confidently on web",
     "version": "2.0",
     "description": "Quickly use Chrome Build-in  Gemini AI to rephrase, translate, reply, summarize, etc. Customize prompts for tailored responses.",
     "permissions": ["activeTab", "storage", "clipboardWrite", "clipboardRead", "aiLanguageModelOriginTrial"],
-    "trial_tokens": ["AmPf+10yK6hxvWNnTsDS5WvxB2R/Ko3m3Bo/1tHO9d8ewPkKKQrYLXgVjmSQ/9/jERz1w3MxMb3htS8CNxhHsQ4AAAB4eyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vZWlsaHBwZnBkbWZraWpjZGpjYmhlbmxubWdqaWJmbGQiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElGb3JFeHRlbnNpb24iLCJleHBpcnkiOjE3NjA0ODYzOTl9"],
+    "trial_tokens": [
+      "AmPf+10yK6hxvWNnTsDS5WvxB2R/Ko3m3Bo/1tHO9d8ewPkKKQrYLXgVjmSQ/9/jERz1w3MxMb3htS8CNxhHsQ4AAAB4eyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vZWlsaHBwZnBkbWZraWpjZGpjYmhlbmxubWdqaWJmbGQiLCJmZWF0dXJlIjoiQUlQcm9tcHRBUElGb3JFeHRlbnNpb24iLCJleHBpcnkiOjE3NjA0ODYzOTl9",
+      "Au42sDgbXdGDJIlcqPXvgNtnup52l07LAKvZDW8qobXztJEEduOzyUbvbBccSx7ah501vwFDF5l641by6kYQrggAAABzeyJvcmlnaW4iOiJjaHJvbWUtZXh0ZW5zaW9uOi8vZWlsaHBwZnBkbWZraWpjZGpjYmhlbmxubWdqaWJmbGQiLCJmZWF0dXJlIjoiQUlTdW1tYXJpemF0aW9uQVBJIiwiZXhwaXJ5IjoxNzUzMTQyNDAwfQ=="
+    ],
     "action": {
       "default_popup": "popup.html",
       "default_title": "Taip"
