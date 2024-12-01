@@ -7,16 +7,12 @@ export const isLanguageModelAvailable = () => {
     return isLocalAiAvailable() && 'languageModel' in self.ai
 }
 
-export const isRewriterAvailable = () => {
-    return isLocalAiAvailable() && 'rewriter' in self.ai
-}
-
 export const isSummarizerAvailable = () => {
     return isLocalAiAvailable() && 'summarizer' in self.ai
 }
 
 export const isModelAvailable = () => {
-    return isLocalAiAvailable() && (isLanguageModelAvailable() || isRewriterAvailable() || isSummarizerAvailable())
+    return isLocalAiAvailable() && (isLanguageModelAvailable() || isSummarizerAvailable())
 }
 
 export const getLanguageModelStatus = async () => {
@@ -47,7 +43,6 @@ export const getCapabilities = async () => {
 }
 
 let languageModel: AILanguageModel | null = null;
-let rewriter: AIRewriter | null = null;
 let summarizer: AISummarizer | null = null;
 
 const initLanguageModel = async () => {
@@ -64,22 +59,9 @@ const initLanguageModel = async () => {
         topK: capabilities.defaultTopK || undefined,
         systemPrompt: "You are a helpful assistant which helps the user to rephrase, translate, reply, summarize, etc.",
     });
-    languageModel.addEventListener("languageModelEvent", (data) => {
-        console.log("languageModelEvent", data);
-    });
     return languageModel;
 }
 
-const initRewriter = async () => {
-    if (!isRewriterAvailable()) {
-        return null;
-    }
-    rewriter = await self.ai.rewriter.create({
-        tone: "more-formal",
-        format: "plain-text",
-    });
-    return rewriter;
-}
 
 const initSummarizer = async () => {
     if (!isSummarizerAvailable()) {
@@ -96,7 +78,6 @@ const initSummarizer = async () => {
 export const initAllModels = async () => {
     await Promise.all([
         initLanguageModel(),
-        initRewriter(),
         initSummarizer()
     ]);
 }
@@ -109,15 +90,6 @@ export const getLanguageModel = () => {
         });
     }
     return languageModel;
-}
-
-export const getRewriter = () => {
-    if (!rewriter) {
-        initRewriter().then(() => {
-            return rewriter;
-        });
-    }
-    return rewriter;
 }
 
 export const getSummarizer = () => {

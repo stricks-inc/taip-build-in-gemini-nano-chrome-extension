@@ -6,7 +6,6 @@ import {
   getSummarizer,
   initAllModels,
   isLanguageModelAvailable,
-  isRewriterAvailable,
   isSummarizerAvailable
 } from "./ai";
 import { saveEmail } from "./firebase";
@@ -38,7 +37,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           email: result.email,
           available: {
             isLanguageModelAvailable: isLanguageModelAvailable(),
-            isRewriterAvailable: isRewriterAvailable(),
             isSummarizerAvailable: isSummarizerAvailable(),
           },
         },
