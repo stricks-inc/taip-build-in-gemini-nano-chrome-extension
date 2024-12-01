@@ -3,37 +3,37 @@ export const BUTTON_CONFIG = [
     promptName: "REWRITE",
     label: "Rewrite Text",
     buttonText: "1",
-    prompt: (text: string, instruction?: string) => `Rephrase the below text \n <text> ${text} </text \n direcltly share the rephrased text in plan textand nothing else`,
+    prompt: (text: string, instruction?: string) => `you need to rewrtire the given text. The given text is ---- ${text} ---- Just directly write the output as normal text`,
   },
   {
     promptName: "CORRECT_ENGLISH",
     label: "Correct Englist",
     buttonText: "2",
-    prompt: (text: string, instruction?: string) => `Just Correct the English, grammar, punctuation and spelling for the below text \n <text> ${text} </text>`,
+    prompt: (text: string, instruction?: string) => `you need to correct the English, grammar, punctuation and spelling for the given text. The given text is ---- ${text} ---- Just directly write the output as normal text`,
   },
   {
     promptName: "TRANSLATE_TO_ENGLISH",
     label: "Translate to English",
     buttonText: "3",
-    prompt: (text: string, instruction?: string) => `Identify the language of below text and transform it to English. \n <text> ${text} </text> \n Only Share the transformed text and nothing else`,
+    prompt: (text: string, instruction?: string) => `you need to translate the given text to English. The given text is ---- ${text} ---- Just directly write the output as normal text`,
   },
   {
     promptName: "SUMMARIZE",
     label: "Summarize the text",
     buttonText: "4",
-    prompt: (text: string, instruction?: string) => `Summarize the below text in less then 100 words \n <text> ${text} </text>`,
+    prompt: (text: string, instruction?: string) => `you need to summarize the given text. The given text is ---- ${text} ---- Just directly write the output as normal text`,
   },
   {
     promptName: "ANSWER_IN_SHORT",
     label: "Answer in short",
     buttonText: "5",
-    prompt: (text: string, instruction?: string) => `Answer the below question in less then 100 words. \n <question> ${text} </question>`,
+    prompt: (text: string, instruction?: string) => `you need to answer the given question in less then 100 words. The given question is ---- ${text} ---- Just directly write the output as normal text`,
   },
   {
     promptName: "CUSTOM",
     label: "Custom",
     buttonText: "6",
-    prompt: (text: string, instruction?: string) => `User have give below text \n <text> ${text} </text> \n Transform this text based on below instruction \n <instruction> ${instruction} </instruction> \n`,
+    prompt: (text: string, instruction?: string) => `you need to transform the given text based on the given instruction. The given text is ---- ${text} ---- The given instruction is ---- ${instruction} ---- Just directly write the output as normal text`,
   },
 ];
 

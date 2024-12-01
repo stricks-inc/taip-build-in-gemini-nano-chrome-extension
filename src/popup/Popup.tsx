@@ -56,21 +56,37 @@ const Popup: React.FC = () => {
 function AICapabilitiesEnabledStep({aiAvailable}: {aiAvailable: any}) {
   
   const handleEnableAI = (flag: string) => {
-    chrome.tabs.create({ url: `chrome://flags/${flag}` });
+    chrome.tabs.create({ url: `chrome://flags/#${flag}` });
   };
   
   //TODO: correct this flag name
 
-  return <div className="taip-flex taip-flex-col taip-justify-center taip-items-center taip-h-full taip-m-4">
-    <h1 className="taip-text-2xl taip-font-bold taip-mb-8">Your browser does not support AI capabilities</h1>
-    <p className="taip-text-sm taip-mb-8">Please enable AI capabilities in your browser settings.</p>
-    <button 
-      onClick={() => handleEnableAI('prompt-api-for-gemini-nano')}
-      className="taip-text-blue-500 taip-underline"
-    >
-     Enable "Prompt API for Gemini Nano" Flags
-    </button>
-  </div>;
+  return (
+    <div className="taip-flex taip-flex-col taip-justify-center taip-items-center taip-h-full taip-m-4">
+      <h1 className="taip-text-2xl taip-font-bold taip-mb-8">
+        Your browser does not support AI capabilities
+      </h1>
+      <p className="taip-text-sm taip-mb-8">
+        Please enable AI capabilities in your browser settings.
+      </p>
+      <div>
+        <button
+          onClick={() => handleEnableAI("prompt-api-for-gemini-nano")}
+          className="taip-text-blue-500 taip-underline"
+        >
+          Enable "Prompt API for Gemini Nano" Flags
+        </button>
+
+        <button
+          onClick={() => handleEnableAI("summarization-api-for-gemini-nano")}
+          className="taip-text-blue-500 taip-underline taip-mt-2"
+        >
+          Enable "summarization-api-for-gemini-nano" Flags
+        </button>
+        <p className="taip-text-sm taip-mb-2">Relaunch your browser after enabling the above flags.</p>
+      </div>
+    </div>
+  );
 }
 
 function HowItWorks({message}: {message: string | null}) {

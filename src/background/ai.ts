@@ -75,8 +75,8 @@ const initRewriter = async () => {
         return null;
     }
     rewriter = await self.ai.rewriter.create({
-        tone: "as-is",
-        format: "as-is",
+        tone: "more-formal",
+        format: "plain-text",
     });
     return rewriter;
 }
