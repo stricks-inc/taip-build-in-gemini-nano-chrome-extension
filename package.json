@@ -1,7 +1,7 @@
 {
   "name": "taip-chrome-extension",
-  "version": "1.0.0",
-  "description": "",
+  "version": "2.0",
+  "description": "Quickly use Chrome Build-in Gemini AI to rephrase, translate, reply, summarize, etc. Customize prompts for tailored responses.",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@types/dom-chromium-ai": "^0.0.4",
     "firebase": "^10.13.1",
