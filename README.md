@@ -93,11 +93,12 @@ Zip the `dist` folder and updload in the chrome store
 
 ## Technologies Used
 
-- React
-- Webpack
-- Tailwind
-- Firebase Firestore
-- Chrome Extension APIs
+- [Chrome Build In AI](https://developer.chrome.com/docs/ai/built-in)
+- [Chrome Extension APIs](https://developer.chrome.com/docs/extensions)
+- [React](https://react.dev/)
+- [Webpack](https://webpack.js.org/)
+- [Tailwind](https://tailwindcss.com/)
+- [Firebase Firestore](https://firebase.google.com/docs/firestore)
 
 
 ## Contributing
