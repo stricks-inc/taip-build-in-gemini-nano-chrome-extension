@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Taip to write confidently on web",
-    "version": "2.0",
+    "version": "2.1",
     "description": "Quickly use Chrome Build-in  Gemini AI to rephrase, translate, reply, summarize, etc. Customize prompts for tailored responses.",
     "permissions": ["activeTab", "storage", "clipboardWrite", "clipboardRead", "aiLanguageModelOriginTrial"],
     "trial_tokens": [
