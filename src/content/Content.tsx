@@ -148,17 +148,8 @@ const Content: React.FC = () => {
   }
 
   if (!isVisible) {
-    console.log("not visible");
     return null;
   }
-
-  console.log("states", {
-    isVisible,
-    isLoading,
-    showInfoPopup,
-    error,
-    message
-  });
 
   return (
     <div

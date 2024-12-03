@@ -87,7 +87,6 @@ export const handleTranform = (
   onSuccessfulTransform: (text: string) => void
 ) => {
   if (isLoading) {
-    console.log("handleTranform still loading", isLoading);
     return;
   }
 

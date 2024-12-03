@@ -17,13 +17,25 @@ const Popup: React.FC = () => {
   useEffect(() => {
     chrome.runtime.sendMessage({ command: "get_capabilities" }, (response) => {
       const available = response.capabilities.languageModel;
+      let message = "";
+
       if (available === "no" || available=== null) {
-        setLanguageModelAvailable("Language model not available");
+        message = "Language model not available";
       } else if (available=== "after-download") {
-        setLanguageModelAvailable("Language model is downloading...");
+        message = "Language model is downloading...";
       } else if (available === "readily") {
-        setLanguageModelAvailable("Language model is ready");
+        message = "Language model is ready";
       }
+
+      const summaryAvailable = response.capabilities.summarizer;
+      if (summaryAvailable === "no" || summaryAvailable=== null) {
+        message += " Summarizer not available";
+      } else if (summaryAvailable=== "after-download") {
+        message += "Summarizer is downloading...";
+      } else if (summaryAvailable === "readily") {
+        message += " Summarizer is ready";
+      }
+      setLanguageModelAvailable(message);
     });
   }, []);
 
