@@ -23,15 +23,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: true });
     });
     return true;
-  } else if (message.command === "get_email") {
-    initAllModels();
-    chrome.storage.local.get(["email"], (result) => {
-      console.log("Background script received email", result);
-      sendResponse({ data: result.email });
-    });
-    return true;
   } else if (message.command === "get_popup_state") {
     chrome.storage.local.get(["email"], (result) => {
+      initAllModels();
       sendResponse({
         data: {
           email: result.email,

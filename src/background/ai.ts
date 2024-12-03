@@ -56,9 +56,10 @@ const initLanguageModel = async () => {
     const capabilities = await self.ai.languageModel.capabilities();
     languageModel = await self.ai.languageModel.create({
         temperature: 0.8,
-        topK: capabilities.defaultTopK || undefined,
+        topK: capabilities.defaultTopK || 3,
         systemPrompt: "You are a helpful assistant which helps the user to rephrase, translate, reply, summarize, etc.",
     });
+    console.log("Language model initialized", languageModel);
     return languageModel;
 }
 
@@ -72,6 +73,7 @@ const initSummarizer = async () => {
         length: "medium",
         type: "tl;dr",
     });
+    console.log("Summarizer initialized", summarizer);
     return summarizer;
 }
 
